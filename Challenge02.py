@@ -5,7 +5,8 @@ import time
 
 def ping(host):
     # Determine the operating system and construct the ping command accordingly
-    ping_str = "-n 1" if platform.system().lower() == "windows" else "-c 1"
+    ping_str = "-n 1" if platform.system().lower() == "windows" else "-c 1 -W 1"
+
     
     # Ping the host and capture the output
     output = subprocess.getoutput(f"ping {ping_str} {host}")
