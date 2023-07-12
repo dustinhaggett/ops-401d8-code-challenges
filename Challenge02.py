@@ -17,7 +17,7 @@ def ping(host):
         return False
 
 def main():
-    host = "192.168.1.1"  # Specify the IP address you want to monitor
+    host = "8.8.8.8"  # Specify the IP address you want to monitor
     interval = 2  # Interval between each ping in seconds
     
     while True:
