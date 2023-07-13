@@ -1,111 +1,67 @@
-#!/usr/bin/python3
-
-# import libraries
-import os, time, datetime
+import os
+import platform
+import subprocess
+import time
 import smtplib
+from email.message import EmailMessage
 from getpass import getpass
 
+def ping(host):
+    # Determine the operating system and construct the ping command accordingly
+    ping_str = "-n 1" if platform.system().lower() == "windows" else "-c 1 -W 1"
 
-# Requirements
-# Ask the user for an email address and password to use for sending notifications
-# Send an email to the administrator if a host status changes (from "up" to "down" or "down" to "up").
-# Clearly indicate in the message which host staus changed, the status before and after, and a timestamp of the event.
+    # Ping the host and capture the output
+    output = subprocess.getoutput(f"ping {ping_str} {host}")
+    
+    # Check if the ping was successful
+    if "TTL=" in output:
+        return True
+    else:
+        return False
 
-# Declare variables
-email = input("Enter your email: ")
-password = getpass("Enter your passowrd: ")
-ip = input("Please provide an ip address: ")
-up = "Host is active"
-down = "Host is down"
+def send_email(sender_email, sender_password, recipient_email, subject, body):
+    msg = EmailMessage()
+    msg.set_content(body)
+    msg['Subject'] = subject
+    msg['From'] = sender_email
+    msg['To'] = recipient_email
+    
+    with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+        smtp.starttls()
+        smtp.login(sender_email, sender_password)
+        smtp.send_message(msg)
 
-# Check that status change
-last = 0
-ping_result = 0
+def main():
+    host = "8.8.8.8"  # Specify the IP address you want to monitor
+    interval = 2  # Interval between each ping in seconds
 
-
-
-
-# Declare functions
-
-# Function that handles when the host goes from down to up
-def send_upAlert():
+    sender_email = input("Enter your email address: ")
+    sender_password = getpass("Enter your email password: ")
+    recipient_email = input("Enter the recipient's email address: ")
+    
+    previous_status = None
+    
+    while True:
+        timestamp = time.strftime("%Y-%m-%d %H:%M:%S.%f")
+        if ping(host):
+            current_status = "Network Active"
+        else:
+            current_status = "Network Inactive"
         
-    # Gets timestamp
-    now = datetime.datetime.now()
-
-    # Start stmp session
-    s = smtplib.SMTP('smtp.gmail.com', 587)
-
-    # Start TLS
-    s.starttls()
-
-    # Authentication
-    s.login(email, password)
-
-    message = "Your server came back up"
-
-    # Send the email
-    s.sendmail(mailbot@codefellows.com, email, message)
-
-    # Close the session
-    s.quit()
-
-
-
-
-# Function that handles when the host goes from up to down
-def send_upAlert():
+        if previous_status is not None and current_status != previous_status:
+            subject = "Server Status Notification"
+            if current_status == "Network Active":
+                body = "Your server came back up."
+            else:
+                body = "Your server went down."
+            
+            body += f"\nTimestamp: {timestamp}"
+            send_email(sender_email, sender_password, recipient_email, subject, body)
         
-    # Gets timestamp
-    now = datetime.datetime.now()
+        print(f"{timestamp} {current_status} to {host}")
+        
+        previous_status = current_status
+        time.sleep(interval)
 
-    # Start stmp session
-    s = smtplib.SMTP('smtp.gmail.com', 587)
-
-    # Start TLS
-    s.starttls()
-
-    # Authentication
-    s.login(email, password)
-
-    message = "Your server went down"
-
-    # Send the email
-    s.sendmail(mailbot@codefellows.com, email, message)
-
-    # Close the session
-    s.quit()
-
-
-
-
-# Function that handles my ping
-def check ping(ip):
-
-    global ping_result
-    global last
-
-    # Sends a single ping to the target and puts the response into a variable
-
-    # Check the change of status from up to down and down to up
-    if ((ping_result !=last) and (ping_result == up))
-        last = up
-        send_upAlert()
-    elif ((ping_result != last) and (ping_result == down))
-        send_downAlert()
-        last = down
-
-    response = os.system("ping -c 1 " + ip)
-    return ping_status
-
-
-
-# Handle the function output
-
-
-
-
-
-
-
-
+if __name__ == "__main__":
+    main()
