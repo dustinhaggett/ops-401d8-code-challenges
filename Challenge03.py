@@ -1,3 +1,35 @@
+import os
+import platform
+import subprocess
+import time
+import smtplib
+from email.message import EmailMessage
+from getpass import getpass
+
+def ping(host):
+    # Determine the operating system and construct the ping command accordingly
+    ping_str = "-n 1" if platform.system().lower() == "windows" else "-c 1 -W 1"
+
+    # Ping the host and capture the output
+    output = subprocess.getoutput(f"ping {ping_str} {host}")
+    
+    # Check if the ping was successful
+    if "TTL=" in output:
+        return True
+    else:
+        return False
+
+def send_email(sender_email, sender_password, recipient_email, subject, body):
+    msg = EmailMessage()
+    msg.set_content(body)
+    msg['Subject'] = subject
+    msg['From'] = sender_email
+    msg['To'] = recipient_email
+    
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+        smtp.login(sender_email, sender_password)
+        smtp.send_message(msg)
+
 def main():
     host = "8.8.8.8"  # Specify the IP address you want to monitor
     interval = 2  # Interval between each ping in seconds
@@ -16,21 +48,14 @@ def main():
             current_status = "Network Inactive"
         
         if previous_status is not None and current_status != previous_status:
-            subject = "Server Status Notification"
-            if current_status == "Network Active":
-                body = "Your server came back up."
-            else:
-                body = "Your server went down."
-            
-            body += f"\nTimestamp: {timestamp}"
+            subject = f"Host Status Change - {host}"
+            body = f"Status change at {timestamp}:\nPrevious Status: {previous_status}\nCurrent Status: {current_status}"
             send_email(sender_email, sender_password, recipient_email, subject, body)
         
         print(f"{timestamp} {current_status} to {host}")
         
         previous_status = current_status
         time.sleep(interval)
-    
-    # Send email as a test when the loop breaks
-    subject = "Test Email"
-    body = "This is a test email to confirm that the script is running successfully."
-    send_email(sender_email, sender_password, recipient_email, subject, body)
+
+if __name__ == "__main__":
+    main()
