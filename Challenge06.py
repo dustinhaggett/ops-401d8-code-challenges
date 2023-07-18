@@ -12,7 +12,14 @@ def load_key():
     """
     Loads the key from the current directory named `key.key`
     """
-    return open("key.key", "rb").read()
+    try:
+        return open("key.key", "rb").read()
+    except FileNotFoundError:
+        key = Fernet.generate_key()
+        with open("key.key", "wb") as key_file:
+            key_file.write(key)
+        return key
+
 
 def encrypt(filename, key):
     """
