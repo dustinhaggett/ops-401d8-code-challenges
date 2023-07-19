@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from cryptography.fernet import Fernet
 import os
 
@@ -61,3 +63,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+#attribution to chatgpt4 code interpreter and codefellows github
