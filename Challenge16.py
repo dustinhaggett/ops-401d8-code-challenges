@@ -1,7 +1,7 @@
 import time
 import re
 
-# Part 1: Dictionary Iterator Function
+# Part 1: Dictionary Iterator Function (Mode 1)
 # This function takes a file path as input, opens the file, and iterates through each word in the file.
 # It then prints each word to the screen with a delay of 1 second between each word.
 def dictionary_iterator(file_path):
@@ -11,7 +11,7 @@ def dictionary_iterator(file_path):
             print(word)
             time.sleep(1)  # delay for 1 second
 
-# Part 2: Password Recognized Function
+# Part 2: Password Recognized Function (Mode 2)
 # This function takes a string and a file path as input. It opens the file and checks if the string appears in the file.
 # If the string is found in the file, it prints a message indicating that the string was found.
 # Otherwise, it prints a message indicating that the string was not found.
@@ -22,7 +22,7 @@ def password_recognized(string, file_path):
         else:
             print(f"The string '{string}' was not found in the word list.")
 
-# Part 3: Password Complexity Function
+# Part 3: Password Complexity Function (Mode 3)
 # This function takes a password string as input and evaluates its complexity based on certain metrics.
 # The metrics checked include the length of the password, the presence of capital letters, numbers, and symbols.
 # It prints whether each metric is satisfied by the password and then gives an overall SUCCESS or FAILURE message.
