@@ -1,5 +1,5 @@
 import time
-import re
+import getpass  # Import the getpass module
 
 # Part 1: Dictionary Iterator Function (Mode 1)
 # This function takes a file path as input, opens the file, and iterates through each word in the file.
@@ -26,12 +26,13 @@ def password_recognized(string, file_path):
 # This function takes a password string as input and evaluates its complexity based on certain metrics.
 # The metrics checked include the length of the password, the presence of capital letters, numbers, and symbols.
 # It prints whether each metric is satisfied by the password and then gives an overall SUCCESS or FAILURE message.
-def password_complexity(password):
+def password_complexity():
+    password = getpass.getpass("Enter a password: ")  # Use getpass to securely get the password from the user
     metrics = {
         'length': len(password) >= 8,  # replace 8 with your desired length
-        'capital_letter': bool(re.search(r'[A-Z]', password)),
-        'number': bool(re.search(r'\d', password)),
-        'symbol': bool(re.search(r'\W', password)),
+        'capital_letter': any(c.isupper() for c in password),
+        'number': any(c.isdigit() for c in password),
+        'symbol': any(not c.isalnum() for c in password),
     }
 
     for metric, result in metrics.items():
@@ -47,7 +48,7 @@ def password_complexity(password):
 # It prompts the user to select a mode and takes appropriate actions based on the chosen mode.
 # For mode 1, it asks for the path to the word list file and calls the dictionary_iterator function.
 # For mode 2, it asks for a string and the path to the word list file and calls the password_recognized function.
-# For mode 3, it asks for a password and calls the password_complexity function.
+# For mode 3, it calls the password_complexity function.
 def main():
     print("Select a mode:")
     print("1: Offensive; Dictionary Iterator")
@@ -63,13 +64,14 @@ def main():
         file_path = input("Enter the path to the word list file: ")
         password_recognized(string, file_path)
     elif mode == 3:
-        password = input("Enter a password: ")
-        password_complexity(password)
+        password_complexity()
     else:
         print("Invalid mode selected.")
 
 if __name__ == "__main__":
     main()
+
+
 
 
 # Sources: openai.com, github.com/codefellows
