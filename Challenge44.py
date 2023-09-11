@@ -26,3 +26,8 @@ def portScanner(portno):
         print(f"Error: {e}")
 
 portScanner(portno)
+
+
+
+
+# Attribution to chatgpt4 code interpreter and codefellows github
