@@ -33,7 +33,7 @@ session = requests.session()
 response_session = session.get(URL)
 print(f"Session Cookies: {session.cookies}")
 
-print("Cookie Monster is proud!")
+print("Success")
 
 
 
